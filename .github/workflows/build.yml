@@ -9,4 +9,5 @@ jobs:
     container: node:16
     steps:
       - uses: actions/checkout@v4
+      - run: npm install
       - run: vercel dev
