@@ -1,10 +1,9 @@
 const express = require("express")
 const fs = require("fs").promises
-const cors = require("cors")
 const path = require("path")
-
+const cors = require("cors")
 const app = express()
-const port = 3000
+const port = 3003
 
 const ShortUniqueId = require("short-unique-id")
 function generateUniqueId() {
@@ -21,7 +20,7 @@ async function writeData(res, dataPath, data, message) {
   await fs.writeFile(dataPath, JSON.stringify(data, null, 2))
   res.json({ success: true, message: message })
 }
-function errorMsg(error, message) {
+function errorMsg(res, error, message) {
   console.error(`${message}:`, error)
   res.status(500).json({ success: false, message: message })
 }
@@ -32,6 +31,16 @@ app.use(express.json())
 app.get("/", (req, res) => {
   res.send("Welcome to BadRock")
 })
+
+app.get("/get-data", async (req, res) => {
+  try {
+    const [jsonData, dataPath] = await getdata()
+    res.send(jsonData)
+  } catch (error) {
+    console.log("can not find data", error.message)
+    res.send({})
+  }
+})
 app.post("/add-data", async (req, res) => {
   try {
     const [jsonData, dataPath] = await getdata()
@@ -40,7 +49,7 @@ app.post("/add-data", async (req, res) => {
     jsonData.push(req.body)
     writeData(res, dataPath, jsonData, "Data added successfully")
   } catch (error) {
-    errorMsg(error, "Error updating data")
+    errorMsg(res, error, "Error updating data")
   }
 })
 app.post("/update-data", async (req, res) => {
@@ -65,7 +74,7 @@ app.post("/update-data", async (req, res) => {
     console.log(req.body)
     writeData(res, dataPath, jsonData, "Data updated successfully")
   } catch (error) {
-    errorMsg(error, "Error updating data")
+    errorMsg(res, error, "Error updating data")
   }
 })
 app.post("/delete-data", async (req, res) => {
@@ -81,9 +90,11 @@ app.post("/delete-data", async (req, res) => {
     }
     writeData(res, dataPath, newJsonData, "Data deleted successfully")
   } catch (error) {
-    errorMsg(error, "Error updating data")
+    errorMsg(res, error, "Error updating data")
   }
 })
 app.listen(port, () => {
-  console.log(`Server listening on http://localhost:${port}`)
+  console.log(`Server listening on ${port}`)
 })
+
+module.exports = app
