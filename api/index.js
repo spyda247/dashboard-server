@@ -3,7 +3,7 @@ const fs = require("fs").promises
 const path = require("path")
 const cors = require("cors")
 const app = express()
-const port = 3003
+const port = process.env.PORT || 3003
 
 const ShortUniqueId = require("short-unique-id")
 function generateUniqueId() {
@@ -44,7 +44,6 @@ app.get("/get-data", async (req, res) => {
 app.post("/add-data", async (req, res) => {
   try {
     const [jsonData, dataPath] = await getdata()
-    console.log(jsonData)
     req.body.id = generateUniqueId()
     jsonData.push(req.body)
     writeData(res, dataPath, jsonData, "Data added successfully")
@@ -71,7 +70,6 @@ app.post("/update-data", async (req, res) => {
         console.log("Invalid index")
       }
     }
-    console.log(req.body)
     writeData(res, dataPath, jsonData, "Data updated successfully")
   } catch (error) {
     errorMsg(res, error, "Error updating data")
