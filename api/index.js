@@ -3,7 +3,7 @@ const fs = require("fs").promises
 const path = require("path")
 const cors = require("cors")
 const app = express()
-const port = 3003
+const port = process.env.PORT || 3005
 
 const ShortUniqueId = require("short-unique-id")
 function generateUniqueId() {
