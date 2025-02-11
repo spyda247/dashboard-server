@@ -7,8 +7,14 @@
   },
   {
     "name": "Ridwan",
-    "role": "Instructor",
+    "role": "Student",
     "subject": "JavaScript",
     "id": "2B1YKu"
+  },
+  {
+    "name": "Malacai",
+    "role": "Student",
+    "subject": "JavaScript",
+    "id": "2GFXo4"
   }
 ]
