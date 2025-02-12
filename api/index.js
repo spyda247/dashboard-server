@@ -1,13 +1,11 @@
 import express, { json } from "express"
 import { promises as fs } from "fs"
-import path from "path"
 import cors from "cors"
 import ShortUniqueId from "short-unique-id"
 import { createClient } from "redis"
 const redis = await createClient({ url: process.env.REDIS_URL })
   .on("error", (err) => console.log("Redis Client Error", err))
   .connect()
-
 const app = express()
 const port = process.env.PORT || 3003
 
@@ -17,7 +15,6 @@ app.use(json())
 app.get("/", (req, res) => {
   res.send("Welcome to BadRock")
 })
-
 app.get("/get-data", async (req, res) => {
   try {
     const matchingKeys = await redis.keys("user*")
@@ -74,9 +71,6 @@ app.post("/update-data", async (req, res) => {
 })
 app.post("/delete-data", async (req, res) => {
   try {
-    /* const [jsonData, dataPath] = await getdata()
-    
-    const index = jsonData.findIndex((item) => item.id === req.body.id) */
     let newJsonData = []
     const matchingKeys = await redis.keys("user*")
     let dt = matchingKeys.map((key) => redis.get(key))
@@ -100,25 +94,13 @@ app.post("/delete-data", async (req, res) => {
 app.listen(port, () => {
   console.log(`Server listening on ${port}`)
 })
-
 export default app
-
+async function sendResponse(res, message) {
+  res.json({ success: true, message: message })
+}
 function generateUniqueId() {
   const { randomUUID } = new ShortUniqueId()
   return randomUUID()
-}
-async function getdata() {
-  const dataPath = path.join("./api/", "data.json")
-  const data = await fs.readFile(dataPath, "utf8")
-  const jsonData = JSON.parse(data)
-  return [jsonData, dataPath]
-}
-async function writeData(res, dataPath, data, message) {
-  await fs.writeFile(dataPath, JSON.stringify(data, null, 2))
-  res.json({ success: true, message: message })
-}
-async function sendResponse(res, message) {
-  res.json({ success: true, message: message })
 }
 function errorMsg(res, error, message) {
   console.error(`${message}:`, error)
