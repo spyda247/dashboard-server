@@ -1,5 +1,4 @@
 import express, { json } from "express"
-import { promises as fs } from "fs"
 import cors from "cors"
 import ShortUniqueId from "short-unique-id"
 import { createClient } from "redis"
